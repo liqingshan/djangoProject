@@ -41,9 +41,6 @@ class AdminSecureMiddleware(object):
 
         ip_addr = ipaddress.ip_address(request.META.get('REMOTE_ADDR'))
 
-        # print('ip addr ' + str(ip_addr))
-        # print(self.get_allow_addresses())
-
         if ip_addr not in self.get_allow_addresses():
             return HttpResponseForbidden()
 

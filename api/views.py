@@ -2,7 +2,8 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from rest_framework import viewsets
 
-from api.serializers import UserSerializer
+from api.models import ThrottleStrategyModel
+from api.serializers import UserSerializer, ThrottleStrategySerializer
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -13,10 +14,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
 
 
-def test(request):
-    data = "this is a test"
-
-    print(request.user.username)
-
-    print(data)
-    return HttpResponse(data, content_type='application/json')
+class ThrottleStrategyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ThrottleStrategyModel.objects.all()
+    serializer_class = ThrottleStrategySerializer
