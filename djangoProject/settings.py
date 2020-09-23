@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'api.middlewares.AdminSecureMiddleware',
+    'api.middlewares.StatisticsMiddleware',
 ]
 
 
