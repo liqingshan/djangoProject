@@ -5,9 +5,14 @@ from django.core.cache import cache
 
 from rest_framework.throttling import BaseThrottle
 
-from api.models import ThrottleStrategyModel
+from api.models import TokenBucketModel
 
 logger = logging.getLogger(__name__)
+
+THROTTLE_TOKEN_BUCKET = "00"
+THROTTLE_LEAK_BUCKET = "01"
+
+current_strategy = "00"
 
 
 class TokenBucket(object):
@@ -67,7 +72,7 @@ def get_cache_token_bucket():
     if cache_value:
         _token_bucket._rate = cache_value
     else:
-        cache_value = ThrottleStrategyModel.objects.get(type=1).rate
+        cache_value = TokenBucketModel.objects.filter()[0].rate
         cache.set(key, cache_value, timeout)
 
     key = 'throttle_strategy_capacity'
@@ -75,7 +80,7 @@ def get_cache_token_bucket():
     if cache_value:
         _token_bucket._capacity = cache_value
     else:
-        cache_value = ThrottleStrategyModel.objects.get(type=1).capacity
+        cache_value = TokenBucketModel.objects.filter()[0].capacity
         cache.set(key, cache_value, timeout)
 
 
@@ -91,3 +96,18 @@ class TokenBucketRateThrottle(BaseThrottle):
                 "status": "status",
             }
         return True
+
+
+class LeakBucketRateThrottle(BaseThrottle):
+
+    def allow_request(self, request, view):
+        return True
+
+
+class Throttle(BaseThrottle):
+    def allow_request(self, request, view):
+        # 选择不同的限流策略
+        if current_strategy == THROTTLE_TOKEN_BUCKET:
+            return TokenBucketRateThrottle.allow_request(request, view)
+        elif current_strategy == THROTTLE_LEAK_BUCKET:
+            return LeakBucketRateThrottle.allow_request(request, view)

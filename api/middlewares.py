@@ -2,8 +2,10 @@ import ipaddress
 import logging
 import time
 
+from api.models import IPAccessControlModel
 
 logger_stat = logging.getLogger("statistics")
+logger = logging.getLogger(__name__)
 
 from django.http import HttpResponseForbidden
 from django.utils.deprecation import MiddlewareMixin
@@ -20,10 +22,6 @@ def get_x_forward_for_addr(request):
 
 
 class AdminSecureMiddleware(object):
-    allow_networks = [
-        ipaddress.ip_network('10.53.0.0/20'),
-        ipaddress.ip_network('127.0.0.1')
-    ]
 
     allow_addresses = []
 
@@ -32,9 +30,15 @@ class AdminSecureMiddleware(object):
         if len(cls.allow_addresses) > 0:
             return cls.allow_addresses
 
-        for network in cls.allow_networks:
-            for ip in network:
+        model_list = IPAccessControlModel.objects.filter(type=1)
+        for m in model_list:
+            ip_net = ipaddress.ip_network(m.network)
+            for ip in ip_net:
                 cls.allow_addresses.append(ip)
+
+        print(cls.allow_addresses)
+        logging.info(cls.allow_addresses)
+        logger.info(cls.allow_addresses)
 
         return cls.allow_addresses
 

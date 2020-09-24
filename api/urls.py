@@ -6,7 +6,9 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'strategy/throttle', views.ThrottleStrategyViewSet)
+router.register(r'access/ip', views.IPAccessControlViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls))
+    url(r'^', include(router.urls)),
+    url(r'^gateway', views.GatewayView.as_view())
 ]
