@@ -78,7 +78,7 @@ class IPAccessControlViewSet(viewsets.ViewSet):
         }
 
 
-#根据 x-acc header 转发
+# 根据 x-acc header 转发
 class GatewayView(APIView):
 
     def get(self, request, format=None):
@@ -89,6 +89,7 @@ class GatewayView(APIView):
         if path is None:
             return Response("no path found")
         return redirect(path)
+
 
 class GatewayView2(APIView):
 

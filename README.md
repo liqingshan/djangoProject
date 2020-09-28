@@ -2,7 +2,9 @@
 
 ## 0.4 TODO
 
-- 转发策略配置
+添加转发策略
+- 根据 X-ACCEC 消息头转发请求 GatewayView
+- 根据请求内容转发 GatewayView2
 
 ## 0.3 功能列表
 
