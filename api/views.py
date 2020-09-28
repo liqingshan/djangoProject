@@ -1,5 +1,10 @@
+import json
+import re
+
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
@@ -39,7 +44,7 @@ class IPAccessControlViewSet(viewsets.ViewSet):
     parser_classes = (JSONParser,)
 
     def list(self, request):
-        print(request.META)
+        # print(request.META)
         queryset = IPAccessControlModel.objects.all()
         serializer = IPAccessControlSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -73,12 +78,29 @@ class IPAccessControlViewSet(viewsets.ViewSet):
         }
 
 
+#根据 x-acc header 转发
 class GatewayView(APIView):
 
-    @api_view(['GET', 'POST'])
-    def get(self, request):
+    def get(self, request, format=None):
         """
         Return a list of all users.
         """
-        # TODO: 转发
-        pass
+        path = request.META.get('X-ACCEC')
+        if path is None:
+            return Response("no path found")
+        return redirect(path)
+
+class GatewayView2(APIView):
+
+    def get(self, request, format=None):
+        """
+        Return a list of all users.
+        """
+        locations = settings.LOCATIONS
+        path_prefix = '/gateway'
+
+        for lc in locations:
+            path = request.META.get('PATH_INFO')
+            if path.startswith(path_prefix + lc.get('path')):
+                return redirect(lc.get('backend'))
+        return Response(locations)

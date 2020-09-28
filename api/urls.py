@@ -10,5 +10,6 @@ router.register(r'access/ip', views.IPAccessControlViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
-    url(r'^gateway', views.GatewayView.as_view())
+    url(r'^gateway', views.GatewayView.as_view()),
+    url(r'^gateway2', views.GatewayView2.as_view())
 ]

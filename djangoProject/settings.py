@@ -189,3 +189,14 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
+LOCATIONS = [
+    {
+        'path': '/static',
+        'backend': 'https://www.teambition.com/products/space',
+    },
+    {
+        'path':'/',
+        'backend':'https://www.teambition.com/',
+    }
+]
